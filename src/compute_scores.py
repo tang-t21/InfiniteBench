@@ -137,6 +137,8 @@ def split_retrieval_answer(pred: str):
 
 
 def get_score_one_kv_retrieval(pred, label, model_name: str) -> bool:
+    if isinstance(label, list):
+        label = label[0]
     for c in ['\n', ':', '\"', '\'', '.', ',', '?', '!', '{', '}']:
         pred = pred.replace(c, ' ')
     words = pred.split()
