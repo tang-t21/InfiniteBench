@@ -54,8 +54,9 @@ Click here to download data from 🤗 Huggingface directly: <https://huggingface
 Alternatively, you can download using the 🤗 Datasets library as follows.
 
 ```python
-from datasets import load_dataset
-dataset = load_dataset("xinrongzhang2022/InfiniteBench")
+from datasets import load_dataset, Value, Sequence
+ft = Features({"id": Value("int64"), "context": Value("string"), "input": Value("string"), "answer": Sequence(Value("string")), "options": Sequence(Value("string"))})
+dataset = load_dataset("xinrongzhang2022/InfiniteBench", features=ft)
 ```
 ### Using Scripts
 

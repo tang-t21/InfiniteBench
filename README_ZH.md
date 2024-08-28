@@ -94,8 +94,9 @@ InfiniteBench
 或者使用 Datasets 下载：
 
 ```python
-from datasets import load_dataset
-dataset = load_dataset("xinrongzhang2022/InfiniteBench")
+from datasets import load_dataset, Value, Sequence
+ft = Features({"id": Value("int64"), "context": Value("string"), "input": Value("string"), "answer": Sequence(Value("string")), "options": Sequence(Value("string"))})
+dataset = load_dataset("xinrongzhang2022/InfiniteBench", features=ft)
 ```
 
 ### 安装依赖
