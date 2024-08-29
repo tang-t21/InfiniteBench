@@ -162,13 +162,30 @@ The available tasks are:
 > This will be updated when our preprint paper is released.
 
 ```bibtex
-@misc{zhang2024inftybench,
-      title={$\infty$Bench: Extending Long Context Evaluation Beyond 100K Tokens}, 
-      author={Xinrong Zhang and Yingfa Chen and Shengding Hu and Zihang Xu and Junhao Chen and Moo Khai Hao and Xu Han and Zhen Leng Thai and Shuo Wang and Zhiyuan Liu and Maosong Sun},
-      year={2024},
-      eprint={2402.13718},
-      archivePrefix={arXiv},
-      primaryClass={cs.CL}
+@inproceedings{zhang-etal-2024-bench,
+    title = "$\infty${B}ench: Extending Long Context Evaluation Beyond 100{K} Tokens",
+    author = "Zhang, Xinrong  and
+      Chen, Yingfa  and
+      Hu, Shengding  and
+      Xu, Zihang  and
+      Chen, Junhao  and
+      Hao, Moo  and
+      Han, Xu  and
+      Thai, Zhen  and
+      Wang, Shuo  and
+      Liu, Zhiyuan  and
+      Sun, Maosong",
+    editor = "Ku, Lun-Wei  and
+      Martins, Andre  and
+      Srikumar, Vivek",
+    booktitle = "Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)",
+    month = aug,
+    year = "2024",
+    address = "Bangkok, Thailand",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2024.acl-long.814",
+    pages = "15262--15277",
+    abstract = "Processing and reasoning over long contexts is crucial for many practical applications of Large Language Models (LLMs), such as document comprehension and agent construction. Despite recent strides in making LLMs process contexts with more than 100K tokens, there is currently a lack of a standardized benchmark to evaluate this long-context capability. Existing public benchmarks typically focus on contexts around 10K tokens, limiting the assessment and comparison of LLMs in processing longer contexts. In this paper, we propose , the first LLM benchmark featuring an average data length surpassing 100K tokens. comprises synthetic and realistic tasks spanning diverse domains in English and Chinese. The tasks in are designed to require an understanding of long dependencies in contexts and make simply retrieving a limited number of passages from contexts not sufficient for these tasks. Based on , we evaluate several state-of-the-art LLMs tailored for processing long contexts. The experimental results indicate that existing long-context LLMs still require significant advancements to process 100K+ contexts effectively. Furthermore, we present three intriguing analyses regarding the behavior of LLMs processing long context. Our code and data is released.",
 }
 ```
 
