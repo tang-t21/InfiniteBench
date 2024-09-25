@@ -71,7 +71,7 @@ This will directly dump the data to `data`.
 
 We evaluate SOTA proprietary and open-source LLMs, the result is as follows.
 
-| Task Name        | GPT-4  | YaRN-Mistral-7B | Kimi-Chat | Claude 2 | Yi-6B-200K |  Yi-34B-200K |  Chatglm3-6B-128K |
+| Task Name        | GPT-4  | YaRN-Mistral-7B | Kimi-Chat | Claude 2 | Yi-6B-200K |  Yi-34B-200K |  ChatGLM-3-6B-128K |
 | ---------------- | ------ | --------------- | --------- | -------- | -----------|  -----------| -----------|
 | Retrieve.PassKey | 100%   | 92.71%          | 98.14%    | 97.80%   | 100.00%    | 100.00%    | 92.20%       |
 | Retrieve.Number  | 100%   | 56.61%          | 95.42%    | 98.14%   | 94.92%     | 100.00%    | 80.68%      |
@@ -158,8 +158,6 @@ The available tasks are:
 | Retrieve.KV      | kv_retrieval                    |
 
 ## Citation
-
-> This will be updated when our preprint paper is released.
 
 ```bibtex
 @inproceedings{zhang-etal-2024-bench,
