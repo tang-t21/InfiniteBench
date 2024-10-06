@@ -225,14 +225,14 @@ def get_score_one_math_find(pred, label, model_name: str) -> bool:
         label = label[0]
     if isinstance(label, int):
         # Find first int or float
-        first_num = re.search(r"\d+\.\d+|\d+", pred)
+        first_num = re.search(r"\d+", pred)
         if first_num is None:
             return False
         first_num = first_num.group(0).strip()
         return int(first_num) == label
     elif isinstance(label, float):
         # Find first float or int
-        first_float = re.search(r"\d+\.\d+|\d+", pred)
+        first_float = re.search(r"\d+\.\d+", pred)
         if first_float is None:
             return False
         first_float = first_float.group(0).strip()
@@ -421,10 +421,11 @@ def compute_scores(preds_path, data_name: str, model_name: str):
 
     acc = get_score(labels, preds, data_name, model_name)
     print(acc)
+    return acc
 
 
 ALL_TASKS = [
-    "passkey",
+    # "passkey",
     "number_string",
     "kv_retrieval",
     "longdialogue_qa_eng",
@@ -433,9 +434,9 @@ ALL_TASKS = [
     "longbook_qa_eng",
     "longbook_qa_chn",
     "math_find",
-    "math_calc",
-    "code_run",
-    "code_debug",
+    # "math_calc",
+    # "code_run",
+    # "code_debug",
 ]
 
 if __name__ == "__main__":
@@ -444,8 +445,16 @@ if __name__ == "__main__":
         tasks = ALL_TASKS
     else:
         tasks = [args.task]
+    scores = {}
     for task in tasks:
         result_dir = Path(args.output_dir, args.model_name)
-        preds_path = result_dir / f"preds_{task}.jsonl"
+        if args.weight_percent is not None:
+            result_dir = result_dir / str(args.weight_percent)
+        if args.stop_idx is None:
+            preds_path = result_dir / f"preds_{task}.jsonl"
+        else:
+            preds_path = result_dir / f"preds_{task}_{args.start_idx}-{args.stop_idx}.jsonl"
         assert preds_path.exists(), f"Predictions not found in: {preds_path}"
-        compute_scores(preds_path, task, args.model_name)
+        scores[task]=compute_scores(preds_path, task, args.model_name)
+    with open(f"{result_dir}/scores.json", "w") as f:
+        json.dump(scores, f, indent=4)

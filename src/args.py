@@ -26,7 +26,7 @@ def parse_args() -> Namespace:
     p.add_argument(
         "--model_name",
         type=str,
-        choices=["gpt4", "yarn-mistral", "kimi", "claude2", "rwkv", "yi-6b-200k", "yi-34b-200k", "chatglm3"],
+        choices=["gpt4", "yarn-mistral", "kimi", "claude2", "rwkv", "yi-6b-200k", "yi-34b-200k", "chatglm3", "llama3.1"],
         default="gpt4",
         help="For `compute_scores.py` only, specify which model you want to compute the score for.",  # noqa
     )
@@ -34,4 +34,5 @@ def parse_args() -> Namespace:
     p.add_argument("--stop_idx", type=int, help="The index of the last example to infer on. This is used if you want to evaluate on a (contiguous) subset of the data. Defaults to the length of dataset.")  # noqa
     p.add_argument("--verbose", action='store_true')
     p.add_argument("--device", type=str, default="cuda")
+    p.add_argument("--weight_percent", type=int, default=100)
     return p.parse_args()
