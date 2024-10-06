@@ -1,4 +1,5 @@
-tasks=("number_string" "kv_retrieval" "longbook_sum_eng" "longbook_choice_eng" "longbook_qa_eng" "longbook_qa_chn" "longdialogue_qa_eng" "math_find" "math_calc" "code_run" "code_debug")
+# tasks=("number_string" "kv_retrieval" "longbook_sum_eng" "longbook_choice_eng" "longbook_qa_eng" "longbook_qa_chn" "longdialogue_qa_eng" "math_find" "math_calc" "code_run" "code_debug")
+tasks=("kv_retrieval" "math_find" "code_debug" "longbook_choice_eng")
 weight_percents=(60 80 90 95 99 100)
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 for task in "${tasks[@]}"; do

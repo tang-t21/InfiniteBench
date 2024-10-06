@@ -384,7 +384,7 @@ def get_labels(preds: list) -> list[str]:
     raise ValueError(f"Cannot find label in {preds[0]}")
 
 
-def get_preds(preds: list, data_name: str) -> list[str]:
+def get_preds(preds: list) -> list[str]:
     pred_strings = []
     possible_pred_keys = ["prediction", "pred"]
     for pred in preds:
@@ -417,7 +417,7 @@ def compute_scores(preds_path, data_name: str, model_name: str):
     print("Loading prediction results from", preds_path)
     preds = list(iter_jsonl(preds_path))
     labels = get_labels(preds)
-    preds = get_preds(preds, data_name)
+    preds = get_preds(preds)
 
     acc = get_score(labels, preds, data_name, model_name)
     print(acc)
