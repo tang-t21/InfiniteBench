@@ -127,35 +127,35 @@ def chunk_generate(
         kv_cache_len = kv_cache[0][0].shape[2]
         print("kv_cache_len:", kv_cache_len)
         print("KV cache prepared!")
-        # outputs = model.generate(
-        #     input_ids=input_ids[:, -1:],
-        #     attention_mask=attention_mask[:, -kv_cache_len - 1 :],
-        #     max_new_tokens=max_tokens,
-        #     past_key_values=kv_cache,
-        #     eos_token_id=tok.pad_token_id,
-        #     use_cache=True,
-        # )
-        output_token_ids = []
-        position_ids = torch.tensor([kv_cache_len], dtype=torch.long, device=model.device).unsqueeze(0)
-        for i in range(max_tokens):
-            outputs = model.model.forward(
-                input_ids=input_ids[:, -1:],
-                position_ids=position_ids,
-                past_key_values=kv_cache,
-                use_cache=True,
-            )
-            hidden_states = outputs.last_hidden_state
-            kv_cache = outputs.past_key_values
-            logits = model.lm_head(hidden_states)
-            next_token_logits = logits[:, -1, :]
-            next_token_id = torch.argmax(next_token_logits, dim=-1)
-            output_token_ids.append(next_token_id.item())
-            input_ids = next_token_id.unsqueeze(0)
-            position_ids = torch.tensor([kv_cache[0][0].shape[2]], dtype=torch.long, device=model.device).unsqueeze(0)
-            if next_token_id == tok.eos_token_id:
-                break
+        outputs = model.generate(
+            input_ids=input_ids[:, -1:],
+            attention_mask=attention_mask[:, -kv_cache_len - 1 :],
+            max_new_tokens=max_tokens,
+            past_key_values=kv_cache,
+            eos_token_id=tok.pad_token_id,
+            use_cache=True,
+        )
+        # output_token_ids = []
+        # position_ids = torch.tensor([kv_cache_len], dtype=torch.long, device=model.device).unsqueeze(0)
+        # for i in range(max_tokens):
+        #     outputs = model.model.forward(
+        #         input_ids=input_ids[:, -1:],
+        #         position_ids=position_ids,
+        #         past_key_values=kv_cache,
+        #         use_cache=True,
+        #     )
+        #     hidden_states = outputs.last_hidden_state
+        #     kv_cache = outputs.past_key_values
+        #     logits = model.lm_head(hidden_states)
+        #     next_token_logits = logits[:, -1, :]
+        #     next_token_id = torch.argmax(next_token_logits, dim=-1)
+        #     output_token_ids.append(next_token_id.item())
+        #     input_ids = next_token_id.unsqueeze(0)
+        #     position_ids = torch.tensor([kv_cache[0][0].shape[2]], dtype=torch.long, device=model.device).unsqueeze(0)
+        #     if next_token_id == tok.eos_token_id:
+        #         break
         responses = [
-            tok.decode(t, skip_special_tokens=True) for t in output_token_ids
+            tok.decode(t[1:], skip_special_tokens=True) for t in outputs
         ]
     return responses
 
@@ -186,7 +186,7 @@ def get_pred(
         max_tokens=max_tokens,
         chunk_size=1024,
         verbose=verbose,
-    )
+    )[0]
     print("Chunked generation:", output)
     return output
 
@@ -209,7 +209,7 @@ def load_model(
 if __name__ == "__main__":
     model_name = "llama3.1"
     args = parse_args()
-    torch.set_num_threads(32)
+    torch.set_num_threads(64)
     print(json.dumps(vars(args), indent=4))
     data_name = args.task
 

@@ -74,14 +74,14 @@ def select_elements_per_head(attn_weights, ratio):
     sorted_vals, sorted_indices = torch.sort(attn_weights, dim=1, descending=True)
 
     # Compute the cumulative sum along the sequence length dimension
-    # cumsum = torch.cumsum(sorted_vals, dim=1, dtype=torch.float64)
+    cumsum = torch.cumsum(sorted_vals, dim=1, dtype=torch.float64)
 
     # Create a mask where cumulative sum meets or exceeds the given ratio
-    # mask_cumsum = cumsum >= ratio
+    mask_cumsum = cumsum >= ratio
 
     # Find the index where cumulative sum first meets or exceeds the ratio for each head
-    # selected_lengths = torch.argmax(mask_cumsum.int(), dim=1) + 1  # Add 1 because indices start from 0
-    selected_lengths = torch.tensor([attn_weights.shape[-1] for _ in range(attn_weights.shape[0])])
+    selected_lengths = torch.argmax(mask_cumsum.int(), dim=1) + 1  # Add 1 because indices start from 0
+    # selected_lengths = torch.tensor([attn_weights.shape[-1] for _ in range(attn_weights.shape[0])])
     selected_indices_per_head = []
 
     # Collect the selected indices for each head based on the calculated lengths
@@ -114,19 +114,19 @@ def compute_output(attn_weights, value_states, ratio):
     # Remove batch and singleton dimensions
     attn_weights = attn_weights.squeeze(0).squeeze(1)  # Shape: (num_heads, seq_len)
     value_states = value_states.squeeze(0)  # Shape: (num_heads, seq_len, head_dim)
-    # selected_indices_per_head = select_elements_per_head(attn_weights, ratio)
+    selected_indices_per_head = select_elements_per_head(attn_weights, ratio)
 
     for head in range(num_heads):
-        # indices = selected_indices_per_head[head]  # Tensor of indices, shape: (selected_length,)
+        indices = selected_indices_per_head[head]  # Tensor of indices, shape: (selected_length,)
         # assert torch.all(indices == torch.tensor([i for i in range(seq_len)], device=indices.device))
         # Get the attention weights for these indices
-        attn_weights_selected = attn_weights[head]  # Shape: (selected_length,)
+        attn_weights_selected = attn_weights[head, indices]  # Shape: (selected_length,)
         # assert attn_weights_selected.sum() == 1
         # Renormalize the attention weights to sum to 1
-        attn_weights_renorm = attn_weights_selected
+        attn_weights_renorm = attn_weights_selected / torch.sum(attn_weights_selected, dtype=torch.float32)
         # assert torch.max(torch.abs(attn_weights_renorm - attn_weights[head])) == 0
         # Get the corresponding value_states
-        value_states_selected = value_states[head]  # Shape: (selected_length, head_dim)
+        value_states_selected = value_states[head, indices, :]  # Shape: (selected_length, head_dim)
         # assert torch.max(torch.abs(value_states_selected - value_states[head])) == 0
         # Compute weighted sum
         outputs[0, head] = torch.matmul(attn_weights_renorm.unsqueeze(0), value_states_selected)
