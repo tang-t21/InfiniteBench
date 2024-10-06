@@ -502,11 +502,11 @@ class LlamaAttention(nn.Module):
         attn_weights = nn.functional.softmax(attn_weights, dim=-1, dtype=torch.float32).to(query_states.dtype)
         attn_weights = nn.functional.dropout(attn_weights, p=self.attention_dropout, training=self.training)
         weight_percent = kwargs.get("weight_percent", 100)
-        # if query_states.shape[-2] == 1:
-        #     attn_output = compute_output(attn_weights, value_states, weight_percent / 100)
-        # else:
-        #     attn_output = torch.matmul(attn_weights, value_states)
-        attn_output = torch.matmul(attn_weights, value_states)
+        if weight_percent != 100 and query_states.shape[-2] == 1:
+            attn_output = compute_output(attn_weights, value_states, weight_percent / 100)
+        else:
+            attn_output = torch.matmul(attn_weights, value_states)
+        # attn_output = torch.matmul(attn_weights, value_states)
         # if query_states.shape[-2] == 1:
         #     attn_output1 = compute_output(attn_weights, value_states, weight_percent / 100)
         #     print("gap between attn_output1 and attn_output:", torch.max(torch.abs(attn_output1 - attn_output)))
