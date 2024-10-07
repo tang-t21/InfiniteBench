@@ -21,6 +21,7 @@ def plot_scores(scores_by_task, weight_percents, tasks, output_dir):
     for task in tasks:
         print(task, scores_by_task[task])
         plt.plot(weight_percents, scores_by_task[task], label=f"{task}")
+    plt.ylim(0,1)
     plt.xticks(weight_percents)
     plt.title(f"Scores of tasks VS weight percents")
     plt.legend()
@@ -30,10 +31,10 @@ def plot_scores(scores_by_task, weight_percents, tasks, output_dir):
 
 if __name__ == "__main__":
     args = parse_args()
-    if args.task == "all":
+    if args.task[0] == "all":
         tasks = ALL_TASKS
     else:
-        tasks = [args.task]
-    weight_percents = [50,60,80,90,95,99]
+        tasks = args.task
+    weight_percents = [50,70,90,95,100]
     scores_by_task = process_data(args, weight_percents, tasks)
     plot_scores(scores_by_task, weight_percents, tasks, args.output_dir)

@@ -425,7 +425,7 @@ def compute_scores(preds_path, data_name: str, model_name: str):
 
 
 ALL_TASKS = [
-    # "passkey",
+    "passkey",
     "number_string",
     "kv_retrieval",
     "longdialogue_qa_eng",
@@ -434,17 +434,17 @@ ALL_TASKS = [
     "longbook_qa_eng",
     "longbook_qa_chn",
     "math_find",
-    # "math_calc",
-    # "code_run",
-    # "code_debug",
+    "math_calc",
+    "code_run",
+    "code_debug",
 ]
 
 if __name__ == "__main__":
     args = parse_args()
-    if args.task == "all":
+    if args.task[0] == "all":
         tasks = ALL_TASKS
     else:
-        tasks = [args.task]
+        tasks = args.task
     scores = {}
     for task in tasks:
         result_dir = Path(args.output_dir, args.model_name)

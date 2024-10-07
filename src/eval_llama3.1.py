@@ -211,49 +211,49 @@ if __name__ == "__main__":
     args = parse_args()
     torch.set_num_threads(64)
     print(json.dumps(vars(args), indent=4))
-    data_name = args.task
 
-    # Model
-    max_tokens = DATA_NAME_TO_MAX_NEW_TOKENS[data_name]
     model, tok = load_model(args.model_path)
     model.set_weight_percent(args.weight_percent)
-    # Data
     result_dir = Path(args.output_dir, model_name, str(args.weight_percent))
     result_dir.mkdir(exist_ok=True, parents=True)
-    examples = load_data(data_name, data_dir=args.data_dir)
-    args.start_idx = 0 if args.start_idx is None else args.start_idx
-    args.stop_idx = args.start_idx + min(20,len(examples)//4) if args.stop_idx is None else args.stop_idx
-    if args.stop_idx is None:
-        args.stop_idx = len(examples)
-        output_path = (
-            result_dir / f"preds_{data_name}.jsonl"
-        )
-    else:
-        output_path = (
-            result_dir / f"preds_{data_name}_{args.start_idx}-{args.stop_idx}.jsonl"  # noqa
-        )
+    for data_name in args.task:
+        max_tokens = DATA_NAME_TO_MAX_NEW_TOKENS[data_name]       
+        # Data
+        examples = load_data(data_name, data_dir=args.data_dir)
+        args.start_idx = 0 if args.start_idx is None else args.start_idx
+        args.stop_idx = args.start_idx + min(20,len(examples)//4) if args.stop_idx is None else args.stop_idx
+        if args.stop_idx is None:
+            args.stop_idx = len(examples)
+            output_path = (
+                result_dir / f"preds_{data_name}.jsonl"
+            )
+        else:
+            output_path = (
+                result_dir / f"preds_{data_name}_{args.start_idx}-{args.stop_idx}.jsonl"  # noqa
+            )
 
-    preds = []
-    print("==== Evaluation ====")
-    print(f"# examples: {len(examples)}")
-    print(f"Start index: {args.start_idx}")
-    print(f"Stop index: {args.stop_idx}")
-    print(f"Verbose: {args.verbose}")
-    print(f"Max tokens: {max_tokens}")
-    for i in range(args.start_idx, args.stop_idx):
-        eg = examples[i]
-        input_text = create_prompt(eg, data_name, model_name, args.data_dir)
-        print(f"====== Example {i} ======")
-        pred = get_pred(
-            model, tok, input_text, max_tokens=max_tokens, verbose=args.verbose,
-        )
-        if args.verbose:
-            print(pred)
-        preds.append(
-            {
-                "id": i,
-                "prediction": pred,
-                "ground_truth": get_answer(eg, data_name),
-            }
-        )
-        dump_jsonl(preds, output_path)
+        preds = []
+        print("==== Evaluation ====")
+        print("Task:", data_name)
+        print(f"# examples: {len(examples)}")
+        print(f"Start index: {args.start_idx}")
+        print(f"Stop index: {args.stop_idx}")
+        print(f"Verbose: {args.verbose}")
+        print(f"Max tokens: {max_tokens}")
+        for i in range(args.start_idx, args.stop_idx):
+            eg = examples[i]
+            input_text = create_prompt(eg, data_name, model_name, args.data_dir)
+            print(f"====== Example {i} ======")
+            pred = get_pred(
+                model, tok, input_text, max_tokens=max_tokens, verbose=args.verbose,
+            )
+            if args.verbose:
+                print(pred)
+            preds.append(
+                {
+                    "id": i,
+                    "prediction": pred,
+                    "ground_truth": get_answer(eg, data_name),
+                }
+            )
+            dump_jsonl(preds, output_path)
